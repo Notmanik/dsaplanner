@@ -1,0 +1,149 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Geist", "Inter", "Segoe UI", sans-serif;
+    --font-data: "JetBrains Mono", "Fira Code", "SFMono-Regular", monospace;
+
+    --background: 220 8% 8%;
+    --foreground: 300 2% 89%;
+
+    --surface-dim: 220 8% 8%;
+    --surface: 210 4% 12%;
+    --surface-container-low: 210 4% 11%;
+    --surface-container: 210 3% 13%;
+    --surface-container-high: 210 2% 16%;
+    --surface-container-highest: 210 2% 21%;
+    --surface-container-lowest: 220 9% 6%;
+
+    --card: var(--surface-container);
+    --card-foreground: var(--foreground);
+
+    --popover: var(--surface-container-high);
+    --popover-foreground: var(--foreground);
+
+    --primary: 35 100% 73%;
+    --primary-foreground: 300 2% 89%;
+    --primary-container: 38 92% 50%;
+    --on-primary-container: 37 100% 19%;
+
+    --secondary: var(--surface-container-highest);
+    --secondary-foreground: 300 2% 89%;
+
+    --muted: var(--surface-container-high);
+    --muted-foreground: 30 33% 76%;
+
+    --accent: var(--surface-container-low);
+    --accent-foreground: var(--foreground);
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 300 2% 89%;
+
+    --outline-variant: 30 22% 26%;
+    --border: var(--outline-variant);
+    --input: var(--surface-container-lowest);
+    --ring: var(--primary);
+
+    --radius: 0.125rem;
+
+    --gradient-success: linear-gradient(90deg, #f59e0b 0%, #ffc174 100%);
+    --ambient-shadow: 0 0 32px rgba(0, 0, 0, 0.4);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-display);
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(245, 158, 11, 0.08), transparent 42%),
+      radial-gradient(circle at 100% 100%, rgba(255, 193, 116, 0.06), transparent 35%),
+      linear-gradient(180deg, #121315 0%, #09090b 100%);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  a {
+    color: hsl(var(--primary-container));
+    text-decoration-color: hsl(var(--primary-container) / 0.6);
+  }
+
+  code,
+  kbd,
+  pre,
+  .font-data {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .tm-label {
+    font-family: var(--font-display);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--muted-foreground));
+    font-weight: 600;
+  }
+
+  .tm-data {
+    font-family: var(--font-data);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tm-shell {
+    background: hsl(var(--surface));
+  }
+
+  .tm-panel {
+    background: hsl(var(--surface-container-low));
+  }
+
+  .tm-nested {
+    background: hsl(var(--surface-container));
+  }
+
+  .tm-recess {
+    background: hsl(var(--surface-container-lowest));
+  }
+
+  .tm-ghost-border {
+    border: 1px solid hsl(var(--outline-variant) / 0.15);
+  }
+
+  .tm-glass {
+    backdrop-filter: blur(12px);
+    background: hsl(var(--surface-container-high) / 0.6);
+    box-shadow: var(--ambient-shadow);
+  }
+
+  .tm-progress-gradient {
+    background-image: var(--gradient-success);
+  }
+}
