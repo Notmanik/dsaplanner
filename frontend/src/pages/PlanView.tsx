@@ -170,9 +170,12 @@ export default function PlanView() {
   return (
     <div className="min-h-screen bg-[#09090b] text-foreground selection:bg-primary/30">
       <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-zinc-800/50 bg-surface px-4">
-        <div className="flex items-center gap-3">
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-3 transition-opacity hover:opacity-90"
+        >
           <span className="font-mono text-lg font-bold tracking-tighter text-primary-container">DSA_TERMINAL</span>
-        </div>
+        </button>
 
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 border border-outline-variant/15 bg-surface-container px-3 py-1">
@@ -365,7 +368,10 @@ export default function PlanView() {
           <span className="font-mono text-[10px] uppercase tracking-widest">DASHBOARD</span>
         </button>
 
-        <button className="flex flex-col items-center justify-center border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container">
+        <button
+          onClick={() => navigate(`/plan/${plan._id}`)}
+          className="flex flex-col items-center justify-center border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container"
+        >
           <Terminal className="mb-1 h-4 w-4" />
           <span className="font-mono text-[10px] uppercase tracking-widest">MY_PLAN</span>
         </button>

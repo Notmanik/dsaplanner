@@ -129,6 +129,14 @@ export default function Dashboard() {
     navigate('/login')
   }
 
+  const goToPlanWorkspace = () => {
+    if (activePlan?._id) {
+      navigate(`/plan/${activePlan._id}`)
+      return
+    }
+    navigate('/onboarding')
+  }
+
   if (planLoading) {
     return <div className="h-screen animate-pulse bg-surface-low" />
   }
@@ -146,30 +154,48 @@ export default function Dashboard() {
         </div>
 
         <nav className="flex-1 space-y-1">
-          <button className="flex w-full items-center gap-3 border-r-2 border-primary-container bg-surface-low px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-primary-container">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex w-full items-center gap-3 border-r-2 border-primary-container bg-surface-low px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-primary-container"
+          >
             <Terminal className="h-4 w-4" />
             Terminal
           </button>
-          <button className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200">
+          <button
+            onClick={goToPlanWorkspace}
+            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
+          >
             <GitBranch className="h-4 w-4" />
             Algorithms
           </button>
-          <button className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200">
+          <button
+            onClick={goToPlanWorkspace}
+            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
+          >
             <Sword className="h-4 w-4" />
             Arena
           </button>
-          <button className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200">
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
+          >
             <BarChart3 className="h-4 w-4" />
             Analytics
           </button>
-          <button className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200">
+          <button
+            onClick={() => navigate('/onboarding')}
+            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
+          >
             <Settings className="h-4 w-4" />
             Settings
           </button>
         </nav>
 
         <div className="mt-auto space-y-4 px-6">
-          <button className="flex w-full items-center gap-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:text-zinc-200">
+          <button
+            onClick={goToPlanWorkspace}
+            className="flex w-full items-center gap-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:text-zinc-200"
+          >
             <FileText className="h-4 w-4" />
             Documentation
           </button>
@@ -200,7 +226,10 @@ export default function Dashboard() {
               <button className="rounded-sm p-2 text-zinc-400 transition-all duration-200 hover:bg-zinc-800/40 hover:text-primary-container active:scale-95">
                 <Bell className="h-4 w-4" />
               </button>
-              <button className="rounded-sm p-2 text-zinc-400 transition-all duration-200 hover:bg-zinc-800/40 hover:text-primary-container active:scale-95">
+              <button
+                onClick={goToPlanWorkspace}
+                className="rounded-sm p-2 text-zinc-400 transition-all duration-200 hover:bg-zinc-800/40 hover:text-primary-container active:scale-95"
+              >
                 <Terminal className="h-4 w-4" />
               </button>
             </div>
@@ -328,12 +357,19 @@ export default function Dashboard() {
                   )}
                 </div>
               ) : (
-                <div className="flex min-h-[220px] flex-col items-center justify-center gap-4 p-8 text-center">
-                  <p className="font-mono text-xs uppercase tracking-widest text-zinc-500">
-                    PLAN_NOT_INITIALIZED. PREPARE YOUR FIRST STUDY MATRIX.
-                  </p>
+                <div className="flex min-h-[280px] flex-col items-center justify-center gap-6 p-8 text-center bg-surface-lowest sm:m-4 m-0 border border-dashed border-zinc-800/50 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,191,36,0.05)_0%,transparent_70%)]" />
+                  <div className="h-16 w-16 rounded-full bg-zinc-800/40 flex items-center justify-center border border-zinc-700/50 mb-2 relative z-10">
+                    <Terminal className="h-6 w-6 text-zinc-500" />
+                  </div>
+                  <div className="relative z-10 space-y-2 max-w-[280px]">
+                    <h4 className="font-semibold text-zinc-300">No Active Sequence</h4>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 leading-relaxed">
+                      PLAN_NOT_INITIALIZED. PREPARE YOUR FIRST STUDY MATRIX TO BEGIN TRACKING PROGRESS.
+                    </p>
+                  </div>
                   <Button
-                    className="h-10 gap-2 font-mono text-xs uppercase tracking-widest"
+                    className="relative z-10 h-11 px-6 gap-2 font-mono text-xs uppercase tracking-widest"
                     onClick={() => navigate('/onboarding')}
                   >
                     <Plus className="h-4 w-4" /> EXECUTE_PLAN_SETUP
@@ -377,8 +413,14 @@ export default function Dashboard() {
                   )
                 })
               ) : (
-                <div className="col-span-full font-mono text-xs uppercase tracking-widest text-zinc-500">
-                  ANALYTICS_BUFFER_EMPTY. COMPLETE PROBLEMS TO GENERATE SIGNALS.
+                <div className="col-span-full flex min-h-[160px] flex-col items-center justify-center gap-4 text-center border border-dashed border-zinc-800/50 bg-zinc-900/20 p-8">
+                  <BarChart3 className="h-8 w-8 text-zinc-600 mb-2 opacity-50" />
+                  <div className="space-y-1">
+                    <p className="text-sm font-semibold text-zinc-400">Awaiting Signal Data</p>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 max-w-sm mx-auto">
+                      ANALYTICS_BUFFER_EMPTY. COMPLETE PROBLEMS IN YOUR ACTIVE SEQUENCE TO GENERATE PERFORMANCE SIGNALS.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

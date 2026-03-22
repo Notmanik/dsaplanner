@@ -220,7 +220,10 @@ export default function DayDetail() {
           <Terminal className="mb-1 h-4 w-4" />
           <span className="font-mono text-[10px] uppercase tracking-widest">DASHBOARD</span>
         </button>
-        <button className="flex flex-col items-center justify-center rounded-sm border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container">
+        <button
+          onClick={() => navigate(`/plan/${id}`)}
+          className="flex flex-col items-center justify-center rounded-sm border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container"
+        >
           <Terminal className="mb-1 h-4 w-4" />
           <span className="font-mono text-[10px] uppercase tracking-widest">MY_PLAN</span>
         </button>

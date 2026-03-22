@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { KeyRound, LogIn, Terminal, UserRoundPlus } from 'lucide-react'
+import { KeyRound, LogIn, Terminal, UserRoundPlus, Loader2, Check, X } from 'lucide-react'
 import api from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { AuthTopBar } from '@/components/auth/AuthTopBar'
@@ -81,9 +81,13 @@ export default function Login() {
               <div className="flex items-center justify-between">
                 <label className="tm-label">ACCESS_KEY</label>
                 {!isRegister && (
-                  <a className="font-mono text-[10px] uppercase text-primary-container/80 transition-colors hover:text-primary-container" href="#">
+                  <button
+                    type="button"
+                    onClick={() => setIsRegister(true)}
+                    className="font-mono text-[10px] uppercase text-primary-container/80 transition-colors hover:text-primary-container"
+                  >
                     Recovery
-                  </a>
+                  </button>
                 )}
               </div>
 
@@ -96,6 +100,23 @@ export default function Login() {
                 onChange={setPassword}
                 icon={KeyRound}
               />
+
+              {isRegister && (
+                <div className="flex flex-col gap-1.5 pt-2 font-mono text-[10px] uppercase">
+                  <div className={`flex items-center gap-2 ${password.length >= 6 ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                    {password.length >= 6 ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 text-destructive" />}
+                    <span>MINIMUM_6_CHARACTERS</span>
+                  </div>
+                  <div className={`flex items-center gap-2 ${/[A-Z]/.test(password) ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                    {/[A-Z]/.test(password) ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 text-destructive" />}
+                    <span>UPPERCASE_CHARACTER</span>
+                  </div>
+                  <div className={`flex items-center gap-2 ${/\d/.test(password) ? 'text-emerald-500' : 'text-zinc-500'}`}>
+                    {/\d/.test(password) ? <Check className="h-3 w-3" /> : <X className="h-3 w-3 text-destructive" />}
+                    <span>NUMERIC_CHARACTER</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {error && <AuthErrorPanel message={`${normalizeError(error)}. PLEASE VERIFY SYSTEM IDENTITY AND RETRY.`} />}
@@ -105,8 +126,9 @@ export default function Login() {
               disabled={loading}
               className="h-12 w-full gap-2 font-mono text-xs font-bold uppercase tracking-widest"
             >
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
               {loading ? 'SYNCING...' : isRegister ? 'EXECUTE_REGISTER' : 'EXECUTE_LOGIN'}
-              {isRegister ? <UserRoundPlus className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
+              {!loading && (isRegister ? <UserRoundPlus className="h-4 w-4" /> : <LogIn className="h-4 w-4" />)}
             </Button>
           </form>
 
