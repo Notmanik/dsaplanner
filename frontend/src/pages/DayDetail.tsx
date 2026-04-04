@@ -3,11 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   ArrowLeft,
+  CalendarDays,
   CheckCircle2,
   ExternalLink,
   LogOut,
   Send,
-  Terminal,
   UserRound,
 } from 'lucide-react'
 import api from '@/lib/api'
@@ -140,25 +140,26 @@ export default function DayDetail() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-foreground selection:bg-primary-container selection:text-on-primary-container">
-      <header className="sticky top-0 z-50 border-b border-zinc-800/50 bg-surface">
-        <div className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4">
+      <header className="sticky top-0 z-50 border-b border-zinc-800/50 bg-[#09090b]/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(`/plan/${id}`)}
-              className="flex h-8 w-8 items-center justify-center rounded-sm transition-colors hover:bg-zinc-800/50 active:scale-[0.99]"
+              className="flex h-10 w-10 items-center justify-center rounded-sm border border-zinc-800 bg-zinc-950/60 transition-colors hover:border-zinc-700 active:scale-[0.99]"
             >
               <ArrowLeft className="h-4 w-4 text-primary-container" />
             </button>
             <div className="flex flex-col">
-              <h1 className="text-xs font-semibold uppercase tracking-tight text-primary-container">
-                DSA_TERMINAL{' '}
-                <span className="ml-2 font-mono text-zinc-500">/ DAY_{String((dayNumber ?? 0) + 1).padStart(2, '0')}</span>
-              </h1>
-              <p className="font-mono text-[10px] tracking-tighter text-zinc-400">{isoDate}</p>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">algo_core</p>
+              <h1 className="text-lg font-semibold tracking-tight text-zinc-100">Day {String((dayNumber ?? 0) + 1).padStart(2, '0')}</h1>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
+            <div className="hidden items-center gap-2 rounded-sm border border-zinc-800 bg-zinc-950/60 px-3 py-2 md:flex">
+              <CalendarDays className="h-4 w-4 text-primary-container" />
+              <span className="font-mono text-[11px] uppercase tracking-widest text-zinc-300">{isoDate}</span>
+            </div>
             <div className="flex h-7 w-7 items-center justify-center rounded-sm bg-zinc-800">
               <UserRound className="h-4 w-4 text-zinc-300" />
             </div>
@@ -169,29 +170,51 @@ export default function DayDetail() {
         </div>
       </header>
 
-      <main className="mx-auto mb-24 max-w-5xl p-4 pb-32">
-        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-12">
-          <div className="md:col-span-8 flex min-h-[160px] flex-col justify-between border border-zinc-800/20 bg-surface-low p-6">
-            <div>
-              <span className="mb-2 block text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Current Focus</span>
-              <h2 className="text-2xl font-bold tracking-tight text-foreground">{dashboardMeta.focus}</h2>
+      <main className="mx-auto max-w-6xl p-4 pb-16">
+        <section className="mb-8 overflow-hidden border border-zinc-800/40 bg-surface-low">
+          <div className="grid gap-4 p-6 md:grid-cols-[1.5fr_0.85fr]">
+            <div className="flex min-h-[180px] flex-col justify-between rounded-sm border border-zinc-800/30 bg-zinc-950/30 p-6">
+              <div>
+                <span className="mb-2 block text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Current Focus</span>
+                <h2 className="text-3xl font-bold tracking-tight text-foreground">{dashboardMeta.focus}</h2>
+                <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-400">
+                  Work through today’s assigned set, rate each problem when you finish it, and keep the streak moving.
+                </p>
+              </div>
+              <div className="mt-6 flex gap-6">
+                <Metric value={dashboardMeta.pending} label="Pending" className="text-primary-container" />
+                <Metric value={dashboardMeta.solved} label="Solved" className="text-secondary" />
+                <Metric value={dashboardMeta.total} label="Total" className="text-zinc-200" />
+              </div>
             </div>
-            <div className="mt-4 flex gap-6">
-              <Metric value={dashboardMeta.pending} label="Pending" className="text-primary-container" />
-              <Metric value={dashboardMeta.solved} label="Solved" className="text-secondary" />
-              <Metric value={dashboardMeta.total} label="Total" className="text-zinc-600" />
-            </div>
-          </div>
 
-          <div className="md:col-span-4 flex flex-col items-center justify-center border border-zinc-800/20 bg-surface-container p-6 text-center">
-            <span className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Daily Streak</span>
-            <span className="font-mono text-5xl font-extrabold text-primary-container">{streakData?.streak ?? 0}</span>
-            <span className="mt-2 text-[10px] uppercase tracking-widest text-zinc-400">Days of consistency</span>
+            <div className="grid gap-4">
+              <div className="flex flex-col items-center justify-center border border-zinc-800/30 bg-zinc-950/40 p-6 text-center">
+                <span className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">Daily Streak</span>
+                <span className="font-mono text-5xl font-extrabold text-primary-container">{streakData?.streak ?? 0}</span>
+                <span className="mt-2 text-[10px] uppercase tracking-widest text-zinc-400">Days of consistency</span>
+              </div>
+
+              <div className="border border-zinc-800/30 bg-zinc-950/40 p-5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">Session status</p>
+                <p className="mt-3 text-lg font-semibold text-zinc-100">
+                  {dashboardMeta.pending > 0 ? 'In progress' : 'Day completed'}
+                </p>
+                <p className="mt-2 text-sm text-zinc-500">
+                  {dashboardMeta.pending > 0 ? `${dashboardMeta.pending} questions left to finish today.` : 'Everything assigned for this day has been completed.'}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
         <div className="space-y-4">
-          <h3 className="mb-4 px-1 text-[10px] uppercase tracking-[0.2em] text-zinc-500">Active Queue</h3>
+          <div className="mb-4 flex items-center justify-between px-1">
+            <div>
+              <h3 className="text-[10px] uppercase tracking-[0.2em] text-zinc-500">Active Queue</h3>
+              <p className="mt-2 text-sm text-zinc-400">Open the problem, solve it, then submit your confidence rating.</p>
+            </div>
+          </div>
 
           {dayObj.questions.map((qWrap) => {
             const q = qWrap.questionId
@@ -211,30 +234,6 @@ export default function DayDetail() {
           })}
         </div>
       </main>
-
-      <nav className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-t border-zinc-800 bg-[#09090b] px-4 pb-4 pt-2">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex flex-col items-center justify-center px-6 py-1 text-zinc-500 opacity-60 transition-all duration-100 hover:text-zinc-200"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">DASHBOARD</span>
-        </button>
-        <button
-          onClick={() => navigate(`/plan/${id}`)}
-          className="flex flex-col items-center justify-center rounded-sm border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">MY_PLAN</span>
-        </button>
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex flex-col items-center justify-center px-6 py-1 text-zinc-500 opacity-60 transition-all duration-100 hover:text-zinc-200"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">ANALYTICS</span>
-        </button>
-      </nav>
     </div>
   )
 }
@@ -306,7 +305,7 @@ function QuestionCard({
   }
 
   return (
-    <div className="group border-l-2 border-primary-container bg-surface-low transition-all hover:bg-surface-container">
+    <div className="group overflow-hidden border border-zinc-800/40 bg-surface-low transition-all hover:border-zinc-700/60 hover:bg-surface-container">
       <div className="p-5">
         <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div className="flex-1">

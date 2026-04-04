@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import { useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { CheckCircle2, Flag, LogOut, Play, Terminal } from 'lucide-react'
+import { ArrowLeft, CalendarDays, CheckCircle2, Flag, LogOut, Play, Sparkles } from 'lucide-react'
 import api from '@/lib/api'
 
 type Difficulty = 'Easy' | 'Medium' | 'Hard'
@@ -23,6 +24,7 @@ type PlanDay = {
 
 type Plan = {
   _id: string
+  name?: string
   duration: number
   startDate: string
   dailyPlan: PlanDay[]
@@ -31,11 +33,11 @@ type Plan = {
 const isSolved = (status: PlanQuestion['status']) => status === 'completed' || status === 'skipped'
 
 const dayTintClasses = (difficulty: Difficulty, isCompleted: boolean, totalCount: number) => {
-  if (isCompleted) return 'bg-emerald-500/[0.08] border-emerald-500/30 hover:bg-emerald-500/[0.12]'
-  if (totalCount === 0) return 'bg-surface-container border-outline-variant/5 hover:bg-surface-high'
-  if (difficulty === 'Easy') return 'bg-emerald-500/[0.05] border-emerald-500/20 hover:bg-emerald-500/[0.08]'
-  if (difficulty === 'Medium') return 'bg-amber-500/[0.05] border-amber-500/20 hover:bg-amber-500/[0.08]'
-  return 'bg-red-500/[0.05] border-red-500/20 hover:bg-red-500/[0.08]'
+  if (isCompleted) return 'border-emerald-500/25 bg-emerald-500/[0.06] hover:border-emerald-500/40'
+  if (totalCount === 0) return 'border-zinc-800/60 bg-zinc-950/40 hover:border-zinc-700'
+  if (difficulty === 'Easy') return 'border-emerald-500/20 bg-emerald-500/[0.04] hover:border-emerald-500/35'
+  if (difficulty === 'Medium') return 'border-amber-500/20 bg-amber-500/[0.04] hover:border-amber-500/35'
+  return 'border-red-500/20 bg-red-500/[0.04] hover:border-red-500/35'
 }
 
 export default function PlanView() {
@@ -125,7 +127,6 @@ export default function PlanView() {
         isCompleted,
         isToday,
         dominantDifficulty: dominantDifficulty as Difficulty,
-        difficultyCounts,
       }
     })
   }, [plan, todayKey])
@@ -169,182 +170,170 @@ export default function PlanView() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-foreground selection:bg-primary/30">
-      <header className="sticky top-0 z-50 flex h-14 w-full items-center justify-between border-b border-zinc-800/50 bg-surface px-4">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex items-center gap-3 transition-opacity hover:opacity-90"
-        >
-          <span className="font-mono text-lg font-bold tracking-tighter text-primary-container">DSA_TERMINAL</span>
-        </button>
-
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 border border-outline-variant/15 bg-surface-container px-3 py-1">
-            <Terminal className="h-4 w-4 text-primary-container" />
-            <span className="font-mono text-xs uppercase tracking-tight text-muted-foreground">Session_Active</span>
+      <header className="sticky top-0 z-50 border-b border-zinc-800/50 bg-[#09090b]/90 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex h-10 w-10 items-center justify-center rounded-sm border border-zinc-800 bg-zinc-950/60 transition-colors hover:border-zinc-700"
+            >
+              <ArrowLeft className="h-4 w-4 text-primary-container" />
+            </button>
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">algo_core</p>
+              <h1 className="text-lg font-semibold text-zinc-100">{plan.name || 'Study plan'}</h1>
+            </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center rounded-sm p-2 transition-colors hover:bg-zinc-800/50"
-          >
-            <LogOut className="h-4 w-4 text-zinc-500" />
-          </button>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-2 rounded-sm border border-zinc-800 bg-zinc-950/60 px-3 py-2 md:flex">
+              <CalendarDays className="h-4 w-4 text-primary-container" />
+              <span className="font-mono text-[11px] uppercase tracking-widest text-zinc-300">{plan.duration} days</span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center justify-center rounded-sm p-2 transition-colors hover:bg-zinc-800/50"
+            >
+              <LogOut className="h-4 w-4 text-zinc-500" />
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto mb-24 max-w-7xl px-4 py-8">
-        <section className="mb-10 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <h1 className="mb-2 text-3xl font-semibold italic tracking-tight text-foreground">DSA_PLAN_V2</h1>
-            <div className="flex flex-wrap items-center gap-6">
-              <div className="flex flex-col">
-                <span className="tm-label mb-1">Duration</span>
-                <span className="font-mono text-sm text-primary">
-                  {plan.duration} DAYS (PHASE_01)
-                </span>
-              </div>
+      <main className="mx-auto max-w-7xl px-4 py-8 pb-16">
+        <section className="overflow-hidden border border-zinc-800/40 bg-surface-low">
+          <div className="grid gap-6 p-8 lg:grid-cols-[1.6fr_0.9fr]">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">Plan overview</p>
+              <h2 className="mt-3 text-4xl font-semibold tracking-tight text-zinc-100">{plan.name || 'Study plan'}</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-400">
+                Track progress across the full schedule, jump back into today’s work, and scan where the heavier practice days land.
+              </p>
 
-              <div className="h-8 w-px bg-zinc-800" />
-
-              <div className="flex flex-col">
-                <span className="tm-label mb-1">Active Modules</span>
-                <div className="flex gap-2">
-                  {summary.moduleTags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="border border-outline-variant/10 bg-surface-high px-2 py-0.5 font-mono text-[11px] text-foreground"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {summary.moduleTags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-sm border border-zinc-700/70 bg-zinc-950/60 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-zinc-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
-          </div>
 
-          <div className="flex items-center gap-4 border border-outline-variant/10 bg-surface-low p-4">
-            <div className="text-right">
-              <span className="tm-label mb-1 block">Completion</span>
-              <span className="font-mono text-2xl font-bold text-secondary">
-                {summary.completionPct.toFixed(1)}%
-              </span>
+            <div className="flex flex-col justify-between gap-6 rounded-sm border border-zinc-800/50 bg-zinc-950/50 p-6">
+              <div className="grid grid-cols-2 gap-4">
+                <PlanMetric label="Completion" value={`${summary.completionPct.toFixed(1)}%`} accent="text-secondary" />
+                <PlanMetric label="Questions" value={String(summary.totalQuestions)} accent="text-primary-container" />
+                <PlanMetric label="Solved" value={String(summary.solvedQuestions)} accent="text-zinc-100" />
+                <PlanMetric label="Duration" value={`${plan.duration}d`} accent="text-zinc-100" />
+              </div>
+
+              <button
+                onClick={() => {
+                  if (!resumeTarget) return
+                  navigate(`/plan/${plan._id}/day/${resumeTarget.dateKey}`)
+                }}
+                className="flex items-center justify-center gap-2 rounded-sm bg-primary-container px-4 py-3 text-sm font-semibold uppercase tracking-tight text-on-primary-container transition-all hover:opacity-90 active:scale-[0.98]"
+              >
+                <Play className="h-4 w-4" />
+                Resume work
+              </button>
             </div>
-            <div className="h-10 w-[2px] bg-zinc-800" />
-            <button
-              onClick={() => {
-                if (!resumeTarget) return
-                navigate(`/plan/${plan._id}/day/${resumeTarget.dateKey}`)
-              }}
-              className="flex items-center gap-2 rounded-sm bg-primary-container px-4 py-2 text-sm font-semibold uppercase tracking-tight text-on-primary-container transition-all hover:opacity-90 active:scale-[0.98]"
-            >
-              <Play className="h-4 w-4" />
-              Resume Work
-            </button>
           </div>
         </section>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-          {dayTiles.map((tile) => {
-            const dayNumber = String(tile.index + 1).padStart(2, '0')
-            const isFinalDay = tile.index === dayTiles.length - 1
-            const gotoDay = () => navigate(`/plan/${plan._id}/day/${tile.dateKey}`)
-            const segmentCount = Math.max(1, tile.totalCount || 3)
+        <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <SummaryStrip title="Plan density" value={`${summary.terminalDensity.toFixed(1)}`} note="questions per day" icon={<Sparkles className="h-4 w-4" />} />
+          <SummaryStrip title="Start date" value={new Date(plan.startDate).toLocaleDateString()} note="scheduled kickoff" icon={<CalendarDays className="h-4 w-4" />} />
+          <SummaryStrip title="Pending days" value={String(dayTiles.filter((tile) => tile.solvedCount < tile.totalCount).length)} note="still in progress" icon={<Flag className="h-4 w-4" />} />
+          <SummaryStrip title="Completed days" value={String(dayTiles.filter((tile) => tile.isCompleted).length)} note="fully wrapped" icon={<CheckCircle2 className="h-4 w-4" />} />
+        </section>
 
-            if (tile.isToday) {
+        <section className="mt-8">
+          <div className="mb-5">
+            <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">Schedule</p>
+            <h3 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-100">Daily roadmap</h3>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {dayTiles.map((tile) => {
+              const dayNumber = String(tile.index + 1).padStart(2, '0')
+              const isFinalDay = tile.index === dayTiles.length - 1
+              const gotoDay = () => navigate(`/plan/${plan._id}/day/${tile.dateKey}`)
+              const segmentCount = Math.max(1, tile.totalCount || 4)
+
               return (
                 <button
                   key={tile.day.date}
                   onClick={gotoDay}
-                  className="group relative aspect-square cursor-pointer border-2 border-primary bg-zinc-900 p-3 text-left ring-4 ring-primary/10 transition-all hover:bg-zinc-800"
+                  className={`group relative min-h-[220px] cursor-pointer border p-5 text-left transition-all ${tile.isToday ? 'ring-2 ring-primary-container/30' : ''} ${dayTintClasses(
+                    tile.dominantDifficulty,
+                    tile.isCompleted,
+                    tile.totalCount
+                  )}`}
                 >
                   <div className="flex items-start justify-between">
-                    <span className="font-mono text-xs font-bold text-primary">{dayNumber}</span>
-                    <span className="bg-primary/20 px-1.5 py-0.5 text-[9px] uppercase tracking-tighter text-primary">
-                      Today
-                    </span>
+                    <div>
+                      <span className={`font-mono text-xs ${tile.isToday ? 'text-primary-container' : 'text-zinc-500'}`}>Day {dayNumber}</span>
+                      <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-zinc-500">{tile.dateKey}</p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {tile.isToday ? (
+                        <span className="rounded-sm bg-primary-container/15 px-2 py-1 font-mono text-[9px] uppercase tracking-widest text-primary-container">
+                          Today
+                        </span>
+                      ) : null}
+                      {tile.isCompleted ? (
+                        <CheckCircle2 className="h-4 w-4 text-secondary" />
+                      ) : isFinalDay ? (
+                        <Flag className="h-4 w-4 text-primary-container" />
+                      ) : null}
+                    </div>
                   </div>
 
-                  <div className="mt-2 flex h-1.5 w-full gap-1">
-                    {Array.from({ length: Math.max(1, tile.totalCount || 3) }).map((_, idx) => (
-                      <div key={idx} className={`flex-1 rounded-full ${idx < tile.solvedCount ? 'bg-secondary' : 'bg-zinc-700'}`} />
+                  <div className="mt-6">
+                    <p className="text-3xl font-semibold tracking-tight text-zinc-100">
+                      {tile.solvedCount}
+                      <span className="ml-2 text-base text-zinc-500">/ {tile.totalCount}</span>
+                    </p>
+                    <p className="mt-1 text-sm text-zinc-400">
+                      {tile.totalCount > 0 ? `${tile.totalCount - tile.solvedCount} questions still pending` : 'No questions scheduled'}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 flex h-2 w-full gap-1">
+                    {Array.from({ length: segmentCount }).map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex-1 rounded-full ${idx < tile.solvedCount ? 'bg-secondary' : 'bg-zinc-800'}`}
+                      />
                     ))}
                   </div>
 
-                  <div className="mt-3 space-y-1">
-                    <span className="font-mono text-[11px] font-bold text-foreground">
-                      {tile.solvedCount} / {tile.totalCount} Qs
+                  <div className="mt-5 flex items-center justify-between">
+                    <span
+                      className={`font-mono text-[10px] uppercase tracking-widest ${
+                        tile.dominantDifficulty === 'Hard'
+                          ? 'text-red-400'
+                          : tile.dominantDifficulty === 'Medium'
+                            ? 'text-amber-400'
+                            : 'text-emerald-400'
+                      }`}
+                    >
+                      {tile.totalCount > 0 ? `${tile.dominantDifficulty} focus` : 'Open day'}
                     </span>
-                    <div className="mt-1 flex gap-1.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                      <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-                    </div>
+                    <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500 group-hover:text-zinc-300">
+                      View day
+                    </span>
                   </div>
                 </button>
               )
-            }
-
-            return (
-              <button
-                key={tile.day.date}
-                onClick={gotoDay}
-                className={`group relative aspect-square cursor-pointer border p-3 text-left transition-all ${dayTintClasses(
-                  tile.dominantDifficulty,
-                  tile.isCompleted,
-                  tile.totalCount
-                )}`}
-              >
-                <div className="flex items-start justify-between">
-                  <span className="font-mono text-xs text-zinc-500">{dayNumber}</span>
-
-                  {tile.isCompleted ? (
-                    <CheckCircle2 className="h-4 w-4 text-secondary" />
-                  ) : isFinalDay ? (
-                    <Flag className="h-4 w-4 text-primary-container" />
-                  ) : null}
-                </div>
-
-                <div className="space-y-1">
-                  {tile.isCompleted ? (
-                    <>
-                      <div className="h-1 w-full rounded-full bg-secondary" />
-                      <span className="font-mono text-[10px] text-muted-foreground">{tile.totalCount} Qs COMPLETE</span>
-                    </>
-                  ) : tile.totalCount > 0 ? (
-                    <>
-                      <div className="flex h-1 w-full gap-1">
-                        {Array.from({ length: segmentCount }).map((_, idx) => (
-                          <div
-                            key={idx}
-                            className={`flex-1 rounded-full ${idx < tile.solvedCount ? 'bg-secondary' : 'bg-zinc-800'}`}
-                          />
-                        ))}
-                      </div>
-                      <span className="font-mono text-[10px] text-muted-foreground">
-                        {tile.solvedCount} / {tile.totalCount} Qs
-                      </span>
-                      <span className="font-mono text-[10px] text-zinc-500">
-                        {tile.totalCount - tile.solvedCount} Qs PENDING
-                      </span>
-                      <span
-                        className={`block text-[9px] uppercase ${
-                          tile.dominantDifficulty === 'Hard'
-                            ? 'text-red-400'
-                            : tile.dominantDifficulty === 'Medium'
-                              ? 'text-amber-400'
-                              : 'text-emerald-400'
-                        }`}
-                      >
-                        Dominant: {tile.dominantDifficulty}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="font-mono text-[10px] text-muted-foreground">No Tasks</span>
-                  )}
-                </div>
-              </button>
-            )
-          })}
-        </div>
+            })}
+          </div>
+        </section>
 
         <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-zinc-800 pt-6">
           <LegendDot label="Easy" colorClass="bg-emerald-400" />
@@ -353,37 +342,11 @@ export default function PlanView() {
 
           <div className="ml-auto">
             <span className="font-mono text-[11px] italic text-muted-foreground">
-              Terminal Density: {summary.terminalDensity.toFixed(1)} ops/day
+              Plan density: {summary.terminalDensity.toFixed(1)} questions per day
             </span>
           </div>
         </div>
       </main>
-
-      <nav className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-t border-zinc-800 bg-[#09090b] px-4 pb-4 pt-2">
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex flex-col items-center justify-center px-6 py-1 text-zinc-500 opacity-60 transition-all hover:text-zinc-200"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">DASHBOARD</span>
-        </button>
-
-        <button
-          onClick={() => navigate(`/plan/${plan._id}`)}
-          className="flex flex-col items-center justify-center border border-zinc-700 bg-zinc-900 px-6 py-1 text-primary-container"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">MY_PLAN</span>
-        </button>
-
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="flex flex-col items-center justify-center px-6 py-1 text-zinc-500 opacity-60 transition-all hover:text-zinc-200"
-        >
-          <Terminal className="mb-1 h-4 w-4" />
-          <span className="font-mono text-[10px] uppercase tracking-widest">ANALYTICS</span>
-        </button>
-      </nav>
     </div>
   )
 }
@@ -393,6 +356,38 @@ function LegendDot({ label, colorClass }: { label: string; colorClass: string })
     <div className="flex items-center gap-2">
       <span className={`h-2.5 w-2.5 rounded-full ${colorClass}`} />
       <span className="tm-label text-muted-foreground">{label}</span>
+    </div>
+  )
+}
+
+function PlanMetric({ label, value, accent }: { label: string; value: string; accent: string }) {
+  return (
+    <div className="rounded-sm border border-zinc-800/60 bg-zinc-950/60 p-4">
+      <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">{label}</p>
+      <p className={`mt-2 text-2xl font-semibold tracking-tight ${accent}`}>{value}</p>
+    </div>
+  )
+}
+
+function SummaryStrip({
+  title,
+  value,
+  note,
+  icon,
+}: {
+  title: string
+  value: string
+  note: string
+  icon: ReactNode
+}) {
+  return (
+    <div className="rounded-sm border border-zinc-800/40 bg-surface-low p-5">
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">{title}</span>
+        <span className="text-primary-container">{icon}</span>
+      </div>
+      <p className="mt-4 text-3xl font-semibold tracking-tight text-zinc-100">{value}</p>
+      <p className="mt-1 text-sm text-zinc-500">{note}</p>
     </div>
   )
 }

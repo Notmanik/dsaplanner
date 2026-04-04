@@ -5,17 +5,13 @@ import {
   BarChart3,
   Bell,
   ChevronRight,
-  FileText,
   Flame,
-  GitBranch,
-  LogOut,
   Plus,
   Search,
-  Settings,
-  Sword,
   Terminal,
 } from 'lucide-react'
 import api from '@/lib/api'
+import { AppSidebar } from '@/components/layout/AppSidebar'
 import { Button } from '@/components/ui/button'
 
 type TopicStat = {
@@ -115,20 +111,6 @@ export default function Dashboard() {
     return lastActive.toDateString() === now.toDateString()
   })()
 
-  const contributionCells = Array.from({ length: 84 }, (_, index) => {
-    const bucket = ((index * 13 + streak * 3) % 9)
-    if (bucket <= 3) return 'bg-zinc-800/50'
-    if (bucket <= 5) return 'bg-primary-container/20'
-    if (bucket <= 7) return 'bg-primary-container/50'
-    return 'bg-primary-container'
-  })
-
-  const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('planId')
-    navigate('/login')
-  }
-
   const goToPlanWorkspace = () => {
     if (activePlan?._id) {
       navigate(`/plan/${activePlan._id}`)
@@ -147,67 +129,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-foreground">
-      <aside className="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col border-r border-zinc-800/30 bg-surface py-8 lg:flex">
-        <div className="mb-10 px-6">
-          <span className="font-mono text-lg font-black tracking-tighter text-primary-container">ALGO_CORE</span>
-          <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-zinc-500">v1.0.4_ACTIVE</p>
-        </div>
-
-        <nav className="flex-1 space-y-1">
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="flex w-full items-center gap-3 border-r-2 border-primary-container bg-surface-low px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-primary-container"
-          >
-            <Terminal className="h-4 w-4" />
-            Terminal
-          </button>
-          <button
-            onClick={goToPlanWorkspace}
-            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
-          >
-            <GitBranch className="h-4 w-4" />
-            Algorithms
-          </button>
-          <button
-            onClick={goToPlanWorkspace}
-            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
-          >
-            <Sword className="h-4 w-4" />
-            Arena
-          </button>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
-          >
-            <BarChart3 className="h-4 w-4" />
-            Analytics
-          </button>
-          <button
-            onClick={() => navigate('/onboarding')}
-            className="flex w-full items-center gap-3 px-6 py-4 text-left font-display text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:bg-surface-container hover:text-zinc-200"
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </button>
-        </nav>
-
-        <div className="mt-auto space-y-4 px-6">
-          <button
-            onClick={goToPlanWorkspace}
-            className="flex w-full items-center gap-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:text-zinc-200"
-          >
-            <FileText className="h-4 w-4" />
-            Documentation
-          </button>
-          <button
-            onClick={logout}
-            className="flex w-full items-center gap-3 py-2 text-[11px] font-semibold uppercase tracking-widest text-zinc-500 transition-colors hover:text-zinc-200"
-          >
-            <LogOut className="h-4 w-4" />
-            Logout
-          </button>
-        </div>
-      </aside>
+      <AppSidebar />
 
       <header className="fixed right-0 top-0 z-40 h-16 w-full border-b border-zinc-800/20 bg-[#09090b]/80 px-4 shadow-ambient backdrop-blur-xl lg:w-[calc(100%-16rem)] lg:px-8">
         <div className="flex h-full items-center justify-between gap-4">
@@ -426,28 +348,6 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section className="bg-surface-low p-8 tm-ghost-border">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 className="font-mono text-xs uppercase tracking-[0.2em] text-zinc-400">Contribution_Log_2024</h3>
-              <div className="flex items-center gap-2 font-mono text-[10px] text-zinc-600">
-                <span>Less</span>
-                <div className="flex gap-1">
-                  <div className="h-2.5 w-2.5 border border-zinc-800/30 bg-zinc-800/50" />
-                  <div className="h-2.5 w-2.5 border border-primary-container/20 bg-primary-container/20" />
-                  <div className="h-2.5 w-2.5 border border-primary-container/30 bg-primary-container/40" />
-                  <div className="h-2.5 w-2.5 border border-primary-container/40 bg-primary-container/70" />
-                  <div className="h-2.5 w-2.5 border border-primary-container/60 bg-primary-container" />
-                </div>
-                <span>More</span>
-              </div>
-            </div>
-
-            <div className="grid grid-flow-col grid-rows-7 gap-1 overflow-x-auto pb-2">
-              {contributionCells.map((cell, index) => (
-                <div key={index} className={`h-3 w-3 rounded-[1px] ${cell}`} />
-              ))}
-            </div>
-          </section>
         </div>
       </main>
 

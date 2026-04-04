@@ -7,6 +7,8 @@ import Onboarding from './pages/Onboarding';
 import Dashboard from './pages/Dashboard';
 import PlanView from './pages/PlanView';
 import DayDetail from './pages/DayDetail';
+import AssignedQuestions from './pages/AssignedQuestions';
+import Plans from './pages/Plans';
 
 const queryClient = new QueryClient();
 
@@ -22,6 +24,8 @@ function App() {
             {/* Protected */}
             <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/questions" element={<ProtectedRoute><AssignedQuestions /></ProtectedRoute>} />
+            <Route path="/plans" element={<ProtectedRoute><Plans /></ProtectedRoute>} />
             <Route path="/plan/:id" element={<ProtectedRoute><PlanView /></ProtectedRoute>} />
             <Route path="/plan/:id/day/:date" element={<ProtectedRoute><DayDetail /></ProtectedRoute>} />
 
