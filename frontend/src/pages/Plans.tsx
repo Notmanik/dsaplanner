@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { CalendarDays, ChevronRight, FolderKanban, Search, Target } from 'lucide-react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { CalendarDays, ChevronRight, FolderKanban, Search, Target, Trash2 } from 'lucide-react'
 import api from '@/lib/api'
 import { AppSidebar } from '@/components/layout/AppSidebar'
 
@@ -17,10 +17,27 @@ type PlanSummary = {
 
 export default function Plans() {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data: plans = [], isLoading } = useQuery<PlanSummary[]>({
     queryKey: ['plans'],
     queryFn: () => api.get('/plans/me').then((res) => res.data),
+  })
+
+  const { mutate: deletePlan, isPending: deletingPlan } = useMutation({
+    mutationFn: (planId: string) => api.delete(`/plans/${planId}`).then((res) => res.data),
+    onSuccess: async (data, deletedPlanId) => {
+      if (localStorage.getItem('planId') === deletedPlanId) {
+        if (data?.activePlanId) {
+          localStorage.setItem('planId', data.activePlanId)
+        } else {
+          localStorage.removeItem('planId')
+        }
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ['plans'] })
+      await queryClient.invalidateQueries({ queryKey: ['activePlan'] })
+    },
   })
 
   if (isLoading) {
@@ -74,12 +91,8 @@ export default function Plans() {
             ) : (
               <div className="space-y-4 pt-6">
                 {plans.map((plan) => (
-                  <button
+                  <div
                     key={plan._id}
-                    onClick={() => {
-                      localStorage.setItem('planId', plan._id)
-                      navigate(`/plan/${plan._id}`)
-                    }}
                     className="w-full border border-zinc-800/40 bg-zinc-950/40 p-5 text-left transition-colors hover:border-zinc-700/60"
                   >
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -122,13 +135,33 @@ export default function Plans() {
                           </div>
                         </div>
 
-                        <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-zinc-300">
-                          Open plan
-                          <ChevronRight className="h-3.5 w-3.5" />
-                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            onClick={() => {
+                              localStorage.setItem('planId', plan._id)
+                              navigate(`/plan/${plan._id}`)
+                            }}
+                            className="inline-flex items-center gap-2 border border-zinc-700 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-zinc-300 transition-colors hover:border-primary-container hover:text-primary-container"
+                          >
+                            Open plan
+                            <ChevronRight className="h-3.5 w-3.5" />
+                          </button>
+                          <button
+                            onClick={() => {
+                              const confirmed = window.confirm(`Delete "${plan.name}"? This cannot be undone.`)
+                              if (!confirmed) return
+                              deletePlan(plan._id)
+                            }}
+                            disabled={deletingPlan}
+                            className="inline-flex items-center gap-2 border border-red-500/30 px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-red-400 transition-colors hover:border-red-500/60 hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+                          >
+                            Delete
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             )}

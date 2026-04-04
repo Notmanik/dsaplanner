@@ -108,6 +108,33 @@ router.post('/:id/select', auth, async (req, res) => {
   }
 });
 
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    const plan = await Plan.findOne({ _id: req.params.id, userId: req.user.id });
+    if (!plan) return res.status(404).json({ error: 'Plan not found' });
+
+    const user = await User.findById(req.user.id).select('activePlanId');
+    const isActivePlan = user?.activePlanId && user.activePlanId.toString() === plan._id.toString();
+
+    await Plan.deleteOne({ _id: plan._id });
+
+    if (isActivePlan) {
+      const nextPlan = await Plan.findOne({ userId: req.user.id }).sort({ createdAt: -1 }).select('_id');
+      await User.findByIdAndUpdate(req.user.id, { activePlanId: nextPlan?._id ?? null });
+    }
+
+    res.json({
+      msg: 'Plan deleted',
+      deletedPlanId: plan._id,
+      activePlanId: isActivePlan
+        ? ((await User.findById(req.user.id).select('activePlanId'))?.activePlanId ?? null)
+        : user?.activePlanId ?? null,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.get('/:id', auth, async (req, res) => {
   try {
     const plan = await Plan.findById(req.params.id).populate('dailyPlan.questions.questionId');
