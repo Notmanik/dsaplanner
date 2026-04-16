@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const API_URL = "https://dsaplanner.onrender.com/api";
+
 const api = axios.create({ 
-  // We use the Vite proxy so we just target the local route
-  baseURL: "/api" 
+  baseURL: API_URL,
+  withCredentials: true
 });
 
 api.interceptors.request.use((config) => {

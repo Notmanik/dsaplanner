@@ -7,11 +7,11 @@ let socket: Socket;
 
 export const getSocket = () => {
     if (!socket) {
-        // Connect to the same host that serves the app. In dev, Vite should proxy this if vite.config.ts has WS configured,
-        // or we connects directly to the backend URL if we know it. 
-        // Typically, Vite proxy handles proxying /socket.io paths automatically if target is set correctly.
-        socket = io({
+        const SOCKET_URL = "https://dsaplanner.onrender.com";
+
+        socket = io(SOCKET_URL, {
             autoConnect: false, // Don't connect until we have a token or user intent
+            withCredentials: true
         });
 
         socket.on('connect', () => {
