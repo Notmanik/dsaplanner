@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const RefreshToken = require('../models/RefreshToken');
 const { validate, registerSchema, loginSchema } = require('../middleware/validate');
+const { generateUniqueFriendCode } = require('../utils/generateCode');
 
 const normalizeUsername = (value = '') => value.trim().toLowerCase();
 const escapeRegex = (value = '') => value.replace(/[.*+?^${}()|[\\]\\]/g, '\\\\$&');
@@ -46,8 +47,14 @@ router.post('/register', validate(registerSchema), async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    let uniqueCode = generateUniqueFriendCode();
+    
+    // Ensure code is unique in case of rare collision
+    while (await User.findOne({ uniqueCode })) {
+      uniqueCode = generateUniqueFriendCode();
+    }
 
-    user = new User({ username, password: hashedPassword });
+    user = new User({ username, password: hashedPassword, uniqueCode });
     await user.save();
 
     const { accessToken, refreshToken } = await generateTokens(user.id);

@@ -58,17 +58,15 @@ export default function Login() {
           <form className="space-y-6 p-8" onSubmit={handleSubmit}>
             <div className="space-y-1">
               <h1 className="text-xl font-semibold tracking-tight text-foreground">
-                {isRegister ? 'Create Operator Identity' : 'Authentication Required'}
+                {isRegister ? 'Create your account' : 'Welcome back'}
               </h1>
-              <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
-                {isRegister
-                  ? 'Initializing directory: /root/dsa_planner/operator'
-                  : 'Accessing protected directory: /root/dsa_planner'}
+              <p className="text-sm text-muted-foreground">
+                {isRegister ? 'Register to start planning your DSA practice.' : 'Log in to continue to your planner.'}
               </p>
             </div>
 
             <AuthField
-              label="USER_IDENTIFIER"
+              label="Username"
               placeholder="Username"
               type="text"
               value={username}
@@ -79,7 +77,7 @@ export default function Login() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="tm-label">ACCESS_KEY</label>
+                <label className="tm-label">Password</label>
                 {!isRegister && (
                   <button
                     type="button"
@@ -127,7 +125,7 @@ export default function Login() {
               className="h-12 w-full gap-2 font-mono text-xs font-bold uppercase tracking-widest"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? 'SYNCING...' : isRegister ? 'EXECUTE_REGISTER' : 'EXECUTE_LOGIN'}
+              {loading ? 'Please wait...' : isRegister ? 'Create account' : 'Log in'}
               {!loading && (isRegister ? <UserRoundPlus className="h-4 w-4" /> : <LogIn className="h-4 w-4" />)}
             </Button>
           </form>

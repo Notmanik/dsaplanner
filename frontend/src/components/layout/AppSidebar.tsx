@@ -1,4 +1,4 @@
-import { ClipboardList, FolderKanban, LogOut, PlusSquare } from 'lucide-react'
+import { ClipboardList, FolderKanban, LayoutDashboard, LogOut, PlusSquare, Trophy } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 export function AppSidebar() {
@@ -6,6 +6,20 @@ export function AppSidebar() {
   const navigate = useNavigate()
 
   const navItems = [
+    {
+      label: 'Dashboard',
+      path: '/dashboard',
+      icon: LayoutDashboard,
+      onClick: () => navigate('/dashboard'),
+      isActive: location.pathname === '/dashboard',
+    },
+    {
+      label: 'Social Hub',
+      path: '/friends',
+      icon: Trophy,
+      onClick: () => navigate('/friends'),
+      isActive: location.pathname === '/friends',
+    },
     {
       label: 'Make DSA Plan',
       path: '/onboarding',

@@ -14,6 +14,8 @@ import api from '@/lib/api'
 import { AppSidebar } from '@/components/layout/AppSidebar'
 import { Button } from '@/components/ui/button'
 
+import { FriendsWidget } from '@/components/friends/FriendsWidget'
+
 type TopicStat = {
   topic: string
   averageScore: number
@@ -346,6 +348,19 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+          </section>
+
+          <section className="bg-surface-low p-8 tm-ghost-border">
+            <div className="mb-6 flex items-center justify-between border-b border-zinc-800/50 pb-4">
+              <div>
+                <h3 className="text-lg font-bold tracking-tight">Social & Network</h3>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-widest text-zinc-500">Global Competition Matrix</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/friends')}>
+                Open Social Hub
+              </Button>
+            </div>
+            <FriendsWidget />
           </section>
 
         </div>

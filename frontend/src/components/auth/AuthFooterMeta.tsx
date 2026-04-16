@@ -5,7 +5,6 @@ export function AuthFooterMeta() {
         <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
         <span className="font-mono text-[9.5px] uppercase text-zinc-500 font-medium tracking-wide">Secure Node</span>
       </div>
-      <div className="font-mono text-[9.5px] uppercase tracking-wide text-zinc-500 font-medium">DSA_OS // BUILD_1224_ALPHA</div>
     </div>
   )
 }
